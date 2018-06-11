@@ -1,0 +1,4 @@
+Pillow==5.1.0
+iterm2-tools
+ipdb
+flake8
