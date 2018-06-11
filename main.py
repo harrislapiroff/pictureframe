@@ -32,9 +32,7 @@ def main():
     if target == 'display':
         from vendor import epd7in5b
 
-        print('instantiating epd')
         epd = epd7in5b.EPD()
-        print('initializing epd')
         epd.init()
         epd.display_frame(epd.get_frame_buffer(image))
 
