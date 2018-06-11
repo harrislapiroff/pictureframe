@@ -26,7 +26,7 @@
  # THE SOFTWARE.
  #
 
-import epdif
+import .epdif
 import RPi.GPIO as GPIO
 
 # Display resolution

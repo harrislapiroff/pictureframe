@@ -17,7 +17,8 @@ def render_message(
     align_y='center',
     max_font_size=72,
     min_font_size=10,
-    font_size_step=1
+    font_size_step=1,
+    **pil_kwargs
 ):
     """
     Render a message directly into an ImageDraw object at particular
@@ -36,13 +37,17 @@ def render_message(
 
     # Choose a font size that fits in the frame:
     size = max_font_size
-    font = ImageFont.truetype(font_file, size)
-    text_w, text_h = draw.textsize(message, font=font)
+    font = ImageFont.truetype(
+        font_file, size, layout_engine=ImageFont.LAYOUT_RAQM
+    )
+    text_w, text_h = draw.textsize(message, font=font, **pil_kwargs)
 
-    while text_w > width and size > min_font_size:
+    while (text_w > width or text_h > height) and size > min_font_size:
         size = size - font_size_step
-        font = ImageFont.truetype(font_file, size)
-        text_w, text_h = draw.textsize(message, font=font)
+        font = ImageFont.truetype(
+            font_file, size, layout_engine=ImageFont.LAYOUT_RAQM
+        )
+        text_w, text_h = draw.textsize(message, font=font, **pil_kwargs)
 
     # Calculate coordinates for aligning text as requested
 
@@ -67,7 +72,7 @@ def render_message(
     # Render the image
 
     draw.fontmode = "1"  # Disable anti-aliasing
-    draw.text((text_x, text_y), message, font=font, fill=000)
+    draw.text((text_x, text_y), message, font=font, fill=000, **pil_kwargs)
 
     # Return useful values
 

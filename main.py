@@ -1,10 +1,11 @@
+import random
 from io import BytesIO
 
 from PIL import Image
 from PIL import ImageDraw
 
 from renderers.message import render_message
-from renderers.weather import render_weather
+from renderers.weather import render_weather_today
 
 # Create this file and seed it with config variables
 from local import LATITUDE, LONGITUDE, DARK_SKY_KEY, FONT_FILE
@@ -12,6 +13,13 @@ from local import LATITUDE, LONGITUDE, DARK_SKY_KEY, FONT_FILE
 
 EPD_WIDTH = 640
 EPD_HEIGHT = 384
+
+
+MESSAGES = [
+    'GOOD MORNING, GOOD LOOKING.',
+    'HELLO, GORGEOUS.',
+    'UP AND AT ’EM, TIGER',
+]
 
 
 def main():
@@ -28,15 +36,20 @@ def main():
         width=EPD_WIDTH - 20,
         height=96,
         font_file=FONT_FILE,
-        message='HELLO, GORGEOUS.',
+        message=random.choice(MESSAGES),
         align_x='center',
         align_y='top'
     )
 
-    render_weather(
+    render_weather_today(
         draw,
         x=10,
-        y=msg_h + msg_y + 10, # 10px lower than the message
+        # 10px lower than the message
+        y=msg_h + msg_y + 10,
+        # 1/3 width of the display with 10px gutters (10px on L, 5px on R)
+        width=EPD_WIDTH / 3 - 15,
+        # height left over after message with 10px padding on the top & bottom
+        height=EPD_HEIGHT - msg_h - msg_y - 20,
         font_file=FONT_FILE,
         longitude=LONGITUDE,
         latitude=LATITUDE,
