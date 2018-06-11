@@ -1,4 +1,6 @@
+import argparse
 import random
+import sys
 from io import BytesIO
 
 from PIL import Image
@@ -22,8 +24,25 @@ MESSAGES = [
 ]
 
 
+def setup():
+    parser = argparse.ArgumentParser(
+        description='Render information to a waveshare 7.5" e-paper display'
+    )
+    parser.add_argument(
+        '--target',
+        type=str,
+        nargs='?',
+        help='Where to display the image. Either \'iterm\' or \'display\'.',
+        default='iterm'
+    )
+
+    return parser
+
+
 def main():
-    target = 'console'
+    parser = setup()
+    args = parser.parse_args()
+    target = args.target
 
     image = Image.new('L', (EPD_WIDTH, EPD_HEIGHT), 255)
     draw = ImageDraw.Draw(image)
@@ -63,13 +82,18 @@ def main():
         epd.init()
         epd.display_frame(epd.get_frame_buffer(image))
 
-    elif target == 'console':
+    elif target == 'iterm':
         import iterm2_tools
 
         # print for iterm
         buffered = BytesIO()
         image.save(buffered, format="PNG")
         print(iterm2_tools.image_bytes(buffered.getvalue()))
+
+    else:
+        sys.stderr.write((
+            'Invalid option for target `{}`. Must be `iterm` or `display`\n'
+        ).format(target))
 
 
 if __name__ == '__main__':
