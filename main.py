@@ -3,7 +3,11 @@ from io import BytesIO
 from PIL import Image
 from PIL import ImageDraw
 
-from renderers import render_message
+from renderers.message import render_message
+from renderers.weather import render_weather
+
+# Create this file and seed it with config variables
+from local import LATITUDE, LONGITUDE, DARK_SKY_KEY, FONT_FILE
 
 
 EPD_WIDTH = 640
@@ -17,16 +21,26 @@ def main():
     draw = ImageDraw.Draw(image)
 
     # Render a message across the top
-    render_message(
+    _, _, msg_h, _, msg_y = render_message(
         draw,
         x=10,
         y=10,
         width=EPD_WIDTH - 20,
         height=96,
-        font_file='fonts/NeutraFace.otf',
+        font_file=FONT_FILE,
         message='HELLO, GORGEOUS.',
         align_x='center',
         align_y='top'
+    )
+
+    render_weather(
+        draw,
+        x=10,
+        y=msg_h + msg_y + 10, # 10px lower than the message
+        font_file=FONT_FILE,
+        longitude=LONGITUDE,
+        latitude=LATITUDE,
+        api_key=DARK_SKY_KEY,
     )
 
     if target == 'display':

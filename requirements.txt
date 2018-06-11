@@ -1,3 +1,4 @@
 Pillow==5.1.0
 RPi.GPIO==0.6.3
 spidev==3.2
+requests
